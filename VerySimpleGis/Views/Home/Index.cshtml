@@ -1,0 +1,28 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/js/leaflet/leaflet.css" rel="stylesheet" />
+    <link href="~/Content/css/style.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" 
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" 
+            crossorigin="anonymous"></script>
+    <script src="~/Content/js/leaflet/leaflet.js"></script>
+    <script src="~/Content/js/main.js"></script>
+    <title>VerySimpleGis</title>
+</head>
+<body>
+    <div id="map" class="map">
+        <div id="info">VerySimpleGis</div>
+    </div>
+    <script type="text/javascript">
+        var App = {};
+        App.ROOT = '@Url.Content("~/")';
+    </script>
+</body>
+</html>
