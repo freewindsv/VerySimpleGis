@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     height: 100%;
+    font-family: Arial;
 }
 
 #info {
@@ -9,6 +10,7 @@
     z-index: 500;
     background-color: #cce6ff;
     right: 0;
+    padding:5px;
 }
 
 #map {

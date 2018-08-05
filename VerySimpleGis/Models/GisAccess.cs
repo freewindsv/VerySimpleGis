@@ -7,6 +7,7 @@ namespace VerySimpleGis.Models
 {
     public class GisAccess : IDisposable
     {
+        private const int OGRERR_NONE = 0;
         private const int GEOM_FIELD_IDX = 0;
         private const int COUNTRY_ATTR_NAME_IDX = 4;
 
@@ -37,14 +38,39 @@ namespace VerySimpleGis.Models
 
         public Country GetCountryByCoordinates(double x, double y)
         {
-            x = normalize(x);
+            x = Normalize(x);
             string wkt = $"POINT({x.ToString(nfi)} {y.ToString(nfi)})";
-            Geometry filter = Ogr.CreateGeometryFromWkt(ref wkt, layer.GetLayerDefn().GetGeomFieldDefn(GEOM_FIELD_IDX).GetSpatialRef());
-            layer.SetSpatialFilter(filter);
-            Feature feature = layer.GetNextFeature();
-            if (feature != null)
+            Geometry filter = null;
+            Feature feature = null;
+            try
             {
-                return new Country() { Name = feature.GetFieldAsString(COUNTRY_ATTR_NAME_IDX) };
+                filter = Ogr.CreateGeometryFromWkt(ref wkt, layer.GetLayerDefn().GetGeomFieldDefn(GEOM_FIELD_IDX).GetSpatialRef());
+                layer.SetSpatialFilter(filter);
+                feature = layer.GetNextFeature();
+                if (feature != null)
+                {
+                    string featureWkt = null;
+                    int error = feature.GetGeomFieldRef(GEOM_FIELD_IDX).ExportToWkt(out featureWkt);
+                    if (error == OGRERR_NONE)
+                    {
+                        return new Country() { Name = feature.GetFieldAsString(COUNTRY_ATTR_NAME_IDX), GeomWKT = featureWkt };
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                throw new GisException("Error getting feature by coordinates", ex);
+            }
+            finally
+            {
+                if (filter != null)
+                {
+                    filter.Dispose();
+                }
+                if (feature != null)
+                {
+                    feature.Dispose();
+                }
             }
             return null;
         }
@@ -82,7 +108,7 @@ namespace VerySimpleGis.Models
             disposed = true;
         }
 
-        private double normalize(double x)
+        private double Normalize(double x)
         {
             x = x % 360;
             if (x > 180)

@@ -16,6 +16,7 @@ namespace VerySimpleGis.Controllers
         {
             using (GisAccess gis = new GisAccess(ConfigurationManager.AppSettings["SpatialDataSource"]))
             {
+                //System.Threading.Thread.Sleep(2000);
                 Country country = gis.GetCountryByCoordinates(latlng[1], latlng[0]);
                 return country != null ? Json(country) : Json(new object());
             }
